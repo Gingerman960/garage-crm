@@ -1,12 +1,11 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "tesla-service",
+  "version": "1.0.1",
+  "description": "An admin panel for a car service shop, that helps to manage appointments, customer details, inventory, billing, and tasks",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Artem Kichihin",
+    "email": "gingerman960@gmail.com"
   },
   "main": "./dist/main/main.js",
   "scripts": {

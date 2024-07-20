@@ -14,6 +14,38 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { promisify } from 'util';
+import fs from 'fs';
+const readFile = promisify(fs.readFile);
+
+const userDataPath = app.getPath("userData");
+console.log("UserData Path ", userDataPath);
+let win;
+
+function getNormativeCostData() {
+  console.log('read data for ', 'normativeCostData');
+  return readFile(`${userDataPath}/normativeCostData.json`, 'utf8');
+}
+function getCommissionPercentageData() {
+  console.log('read data for ', 'commissionPercentageData');
+  return readFile(`${userDataPath}/commissionPercentageData.json`, 'utf8');
+}
+function getJobListData() {
+  console.log('read data for ', 'jobListData');
+  return readFile(`${userDataPath}/jobListData.json`, 'utf8');
+}
+function getPartListData() {
+  console.log('read data for ', 'partListData');
+  return readFile(`${userDataPath}/partListData.json`, 'utf8');
+}
+function getCarsStateData() {
+  console.log('read data for ', 'carsStateData');
+  return readFile(`${userDataPath}/carsStateData.json`, 'utf8');
+}
+function getServiceJobHistoryData() {
+  console.log('read data for ', 'serviceJobHistoryData');
+  return readFile(`${userDataPath}/serviceJobHistoryData.json`, 'utf8');
+}
 
 class AppUpdater {
   constructor() {
@@ -29,6 +61,13 @@ ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.on("saveData", (sender, fileName, data) => {
+  console.log('Saving: ', fileName);
+  console.log('With data: ', data);
+  fs.writeFileSync(`${userDataPath}/${fileName}.json`, data);
+  console.log("Data Saved");
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -75,9 +114,11 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
+      sandbox: false,
+      preload: path.join(__dirname, 'preload.js')
+      // preload: app.isPackaged
+      //   ? path.join(__dirname, 'preload.js')
+      //   : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
 
@@ -127,6 +168,12 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    ipcMain.handle('normativeCostData', getNormativeCostData);
+    ipcMain.handle('commissionPercentageData', getCommissionPercentageData);
+    ipcMain.handle('jobListData', getJobListData);
+    ipcMain.handle('partListData', getPartListData);
+    ipcMain.handle('carsStateData', getCarsStateData);
+    ipcMain.handle('serviceJobHistoryData', getServiceJobHistoryData);
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
