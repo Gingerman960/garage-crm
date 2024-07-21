@@ -71,6 +71,7 @@ TeslaService is an admin panel for a car service shop, designed to manage appoin
   "start:renderer": "Starts the renderer process",
   "test": "Runs tests using Jest"
 }
+```
 
 ## License
 
